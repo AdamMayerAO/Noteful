@@ -2,6 +2,9 @@ import React, {Component} from 'react'
 import NotfulForm from './NotefulForm'
 import Context from './Context'
 import config from './config'
+import PropTypes from 'prop-types'
+import NotefulError from './NotefulError'
+import ValidationError from './ValidationError'
 
 export default class AddNote extends Component {
     static defaultProps = {
@@ -9,7 +12,61 @@ export default class AddNote extends Component {
             push: () =>{}
         },
     }
+    
     static contextType = Context;
+    static propTypes = {
+        history: PropTypes.object,
+    }
+
+    constructor (props) {
+        super(props)
+        this.state = {
+            name: {
+                value: "",
+                touched: false
+            },
+            content:{
+                value: "",
+                touched: false,
+            },
+            
+        }
+    }
+    
+    updateName(name) {
+        this.setState({ 
+            name:{
+                value: name, 
+                touched: true 
+            } 
+        })   
+    }
+    updateContent(content) {
+        this.setState({ 
+            content:{
+                value: content, 
+                touched: true 
+            } 
+        })   
+    }
+   
+    validateName(textarea) {
+        const name = this.state.name.value.trim();
+        if (name.length === 0) {
+          return "Name is required";
+        } else if (name.length < 3) {
+          return "Name must be at least 3 characters long";
+        }
+    }
+
+    validateContent(textarea) {
+        const content = this.state.content.value.trim();
+        if (content.length === 0) {
+          return "Please enter content for your note";
+        }
+    }
+   
+   
 
     handleSubmit = e =>{
         e.preventDefault()
@@ -19,6 +76,7 @@ export default class AddNote extends Component {
             folderId: e.target['note-folder-id'].value,
             modified: new Date(),
         }
+
         fetch(`${config.API_ENDPOINT}/notes`, {
             method: 'POST',
             headers: {
@@ -39,24 +97,31 @@ export default class AddNote extends Component {
             console.error({error})
         })
     }
+    
+    
+
 
     render(){
         const {folders = []} = this.context
         return(
             <section className = 'AddNote'>
                 <h2>Create a Note</h2>
+                <NotefulError>
                 <NotfulForm onSubmit = {this.handleSubmit}>
                     <div className = 'field'>
                         <label htmlFor ='note-name-input'>
                             Name
                         </label>
-                        <input type='text' id='note-name-input' name='note-name' />
+                        <input type='text' id='note-name-input' name='note-name' onChange={e => this.updateName(e.target.value)}/>
+                        <ValidationError message = {this.validateName()}/>
                     </div>
                     <div className = 'field'>
                         <label htmlFor ='note-content-input'>
                             Content
                         </label>
-                        <textarea id='note-content-input' name='note-content' />
+                        <textarea id='note-content-input' name='note-content' onChange={e => this.updateContent(e.target.value)}/>
+                        <ValidationError message = {this.validateContent()}/>
+
                     </div>
                     <div className = 'field'>
                         <label htmlFor= 'note-folder-select'>
@@ -69,14 +134,23 @@ export default class AddNote extends Component {
                                 {folder.name}
                                 </option>
                             )}
+
                         </select>
+
                     </div>
                     <div className = 'buttons'>
-                        <buttot type = 'submit'>
+                        <button 
+                            type = 'submit'
+                            disabled={
+                                this.validateName() ||
+                                this.validateContent()
+                            }
+                        >
                             Add note
-                        </buttot>
+                        </button>
                     </div>
                 </NotfulForm>
+                </NotefulError>
             </section>
         )
     }

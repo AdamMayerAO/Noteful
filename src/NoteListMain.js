@@ -5,6 +5,7 @@ import CircleButton from './CircleButton'
 import './NoteListMain.css'
 import Context from './Context'
 import {getNotesForFolder} from './notes-helpers'
+import PropTypes from 'prop-types'
 
 export default class NoteListMain extends React.Component {
     static defaultProps = {
@@ -12,8 +13,11 @@ export default class NoteListMain extends React.Component {
         params: {}
       }
     }
-    static contextType = Context
-  
+    static contextType = Context;
+    static propTypes = {
+      match: PropTypes.object,
+      params: PropTypes.object,
+    }
     render() {
       const { folderId } = this.props.match.params
       const { notes=[] } = this.context
@@ -39,9 +43,9 @@ export default class NoteListMain extends React.Component {
               className='NoteListMain__add-note-button'
             >
               
-              <br />
-              Note
+              Add Note
             </CircleButton>
+            
           </div>
         </section>
       )

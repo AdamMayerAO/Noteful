@@ -4,17 +4,43 @@ import CircleButton from './CircleButton'
 import {countNotesForFolder} from './notes-helpers'
 import './NoteListNav.css'
 import Context from './Context'
+import config from './config'
 
 export default class NoteListNav extends React.Component {
     static contextType = Context;
   
+  
+  handleDeleteFolder = e => {
+    e.preventDefault()
+    const folderId = e.target.id
+
+    fetch(`${config.API_ENDPOINT}/folders/${folderId}`, {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
+      .then(res => {
+        if (!res.ok)
+          return res.json().then(e => Promise.reject(e))
+        return res.json()
+      })
+      .then(() => {
+        this.context.deleteFolder(folderId)
+        // allow parent to perform extra behaviour
+        //this.props.onDeleteFolder(folderId)
+      })
+      .catch(error => {
+        console.error({ error })
+      })
+  } 
     render() {
       const { folders=[], notes=[] } = this.context
       return (
         <div className='NoteListNav'>
           <ul className='NoteListNav__list'>
             {folders.map(folder =>
-              <li key={folder.id}>
+              <li key={folder.id} id={folder.id}>
                 <NavLink
                   className='NoteListNav__folder-link'
                   to={`/folder/${folder.id}`}
@@ -24,6 +50,14 @@ export default class NoteListNav extends React.Component {
                   </span>
                   {folder.name}
                 </NavLink>
+                <button id={folder.id}
+                    className='Folder__delete'
+                    type='button'
+                    onClick={this.handleDeleteFolder}
+
+                  >
+                    Delete Folder
+                </button>
               </li>
             )}
           </ul>
@@ -34,8 +68,7 @@ export default class NoteListNav extends React.Component {
               type='button'
               className='NoteListNav__add-folder-button'
             >
-              <br />
-              Folder
+              Add Folder
             </CircleButton>
           </div>
         </div>

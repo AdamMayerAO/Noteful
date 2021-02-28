@@ -1,8 +1,10 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {Link} from 'react-router-dom'
 import Context from './Context'
 import config from './config'
-//import { format } from 'date-fns'
+import { format } from 'date-fns'
+//{format(modified, 'dd/mm/yyyy')}
+import PropTypes from 'prop-types'
 
 import './Note.css'
 
@@ -12,7 +14,13 @@ export default class Note extends React.Component {
     onDeleteNote: () => {},
   }
   static contextType = Context;
+  static propTypes = {
+    id: PropTypes.string,
+    name: PropTypes.string,
+    modified: PropTypes.string,
 
+
+  }
   handleClickDelete = e => {
     e.preventDefault()
     const noteId = this.props.id
@@ -62,7 +70,7 @@ export default class Note extends React.Component {
             {' '}
             <span className='Date'>
 
-              {modified}
+            {modified}
             </span>
           </div>
         </div>

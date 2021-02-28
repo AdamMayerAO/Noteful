@@ -6,7 +6,11 @@ import NoteListNav from './NoteListNav'
 import NotePageNav from './NotePageNav'
 import NoteListMain from './NoteListMain'
 import NotePageMain from './NotePageMain'
+import AddFolder from './AddFolder'
 import Context from './Context'
+import AddNote from './AddNote'
+import NotefulError from './NotefulError'
+
 class App extends Component {
   state = {
       notes: [],
@@ -34,11 +38,29 @@ class App extends Component {
           });
   }
 
-  handleDeleteNote = noteId => {
+  handleDeleteNote = (noteId) => {
       this.setState({
           notes: this.state.notes.filter(note => note.id !== noteId)
       });
   };
+
+  handleDeleteFolder = (folderId) =>{
+      this.setState({
+          folders: this.state.folders.filter(folder => folder.id !==folderId)
+      });
+  }
+
+  addFolder=(folder) => {
+    let tempState = this.state;
+    tempState.folders.push(folder);
+    this.setState(tempState)
+  }
+
+  addNote = (note) => {
+      let tempState = this.state;
+      tempState.notes.push(note);
+      this.setState(tempState)
+  }
 
   renderNavRoutes() {
       return (
@@ -51,7 +73,7 @@ class App extends Component {
                       component={NoteListNav}
                   />
               ))}
-              <Route path="/note/:noteId" component={NotePageNav} />
+              <Route path="/note/:noteId" component={NotePageNav}/>
               <Route path="/add-folder" component={NotePageNav} />
               <Route path="/add-note" component={NotePageNav} />
           </>
@@ -70,6 +92,8 @@ class App extends Component {
                   />
               ))}
               <Route path="/note/:noteId" component={NotePageMain} />
+              <Route path="/add-folder" component={AddFolder} />
+              <Route path="/add-note" component={AddNote} />
           </>
       );
   }
@@ -78,7 +102,10 @@ class App extends Component {
       const value = {
           notes: this.state.notes,
           folders: this.state.folders,
-          deleteNote: this.handleDeleteNote
+          deleteNote: this.handleDeleteNote,
+          addFolder: this.addFolder,
+          addNote: this.addNote,
+          deleteFolder: this.handleDeleteFolder,
       };
       return (
           <Context.Provider value={value}>
@@ -89,7 +116,9 @@ class App extends Component {
                           <Link to="/">Noteful</Link>{' '}
                       </h1>
                   </header>
+                  <NotefulError>
                   <main className="App__main">{this.renderMainRoutes()}</main>
+                  </NotefulError>
               </div>
           </Context.Provider>
       );

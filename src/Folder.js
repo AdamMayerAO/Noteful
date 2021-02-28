@@ -1,10 +1,47 @@
 import React, { Component } from 'react'
-import data from './dummy-store'
 import {Link} from 'react-router-dom'
+import Context from './Context'
+import config from './config'
+import PropTypes from 'prop-types'
 
 export default class Folder extends Component {
-  componentDidMount(){
+  static defaultProps = {
+    onDeleteFolder:() => {},
   }
+  static contextType = Context;
+  static propTypes ={
+    id: PropTypes.string,
+    state: PropTypes.object,
+    defaultProps: PropTypes.object
+  }
+  
+    handleClickDelete = e => {
+    e.preventDefault()
+    const folderId = this.props.id
+
+
+    fetch(`${config.API_ENDPOINT}/folders/${folderId}`, {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
+      .then(res => {
+        if (!res.ok)
+          return res.json().then(e => Promise.reject(e))
+        return res.json()
+      })
+      .then(() => {
+        this.context.deleteFolder(folderId)
+        // allow parent to perform extra behaviour
+        this.props.onDeleteFolder(folderId)
+        
+      })
+      .catch(error => {
+        console.error({ error })
+      })
+  }
+
 
   render() {
     
@@ -19,6 +56,15 @@ export default class Folder extends Component {
                   <Link to={`/Folder/${folder.id}`}>
                     {folder.name}
                   </Link>
+                  <button
+                    className='Folder__delete'
+                    type='button'
+                    onClick={this.handleClickDelete}
+                    
+                  >
+                    Delete Folder
+
+                  </button>
                 </li>
               )}
               <li>  

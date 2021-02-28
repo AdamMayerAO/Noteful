@@ -42,3 +42,18 @@
     float: right;
     font-size: 10px;
   }
+
+  .Note__delete {
+    --note-button-height: 32px;
+    background-color: #041a3a;
+    border: 0;
+    color: #bdbcbc;
+    float: right;
+    font-size: 12px;
+    height: var(--note-button-height);
+    position: relative;
+    top: calc((var(--note-button-height) + 32px) * -1);
+    transform-origin: right bottom;
+    transform: rotate(-90deg);
+    width: calc(var(--note-height));
+  }

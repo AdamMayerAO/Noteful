@@ -10,7 +10,7 @@ export default class Folder extends Component {
   }
   static contextType = Context;
   static propTypes ={
-    id: PropTypes.string,
+    id: PropTypes.number,
     state: PropTypes.object,
     defaultProps: PropTypes.object
   }
@@ -19,12 +19,11 @@ export default class Folder extends Component {
     e.preventDefault()
     const folderId = this.props.id
 
-
     fetch(`${config.API_ENDPOINT}/folders/${folderId}`, {
       method: 'DELETE',
       headers: {
         'content-type': 'application/json'
-      },
+      },  
     })
       .then(res => {
         if (!res.ok)
@@ -44,7 +43,6 @@ export default class Folder extends Component {
 
 
   render() {
-    
 
       return (
         <div className='Main'>
@@ -53,8 +51,8 @@ export default class Folder extends Component {
             <ul className = "Folders">
               {this.props.state.folder.map(folder =>
                 <li key = {folder.id}>
-                  <Link to={`/Folder/${folder.id}`}>
-                    {folder.name}
+                  <Link to={`/folders/${folder.id}`}>
+                    {folder.title}
                   </Link>
                   <button
                     className='Folder__delete'
@@ -81,7 +79,7 @@ export default class Folder extends Component {
             <ul className = "Notes">
               {this.props.state.note.filter(note => note.folderId === this.props.match.params.folderId).map(note =>
               <li key = {note.id}>
-                <Link to={`/Note/${note.id}`}>
+                <Link to={`/notes/${note.id}`}>
                   {note.name}
                 </Link>
               </li>

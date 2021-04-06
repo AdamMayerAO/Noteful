@@ -4,6 +4,8 @@ import Context from './Context'
 import {findNote} from './notes-helpers'
 import './NotePageMain.css'
 import PropTypes from 'prop-types'
+
+
 export default class NotePageMain extends React.Component{
     static defaultProps = {
         match: {
@@ -21,6 +23,7 @@ export default class NotePageMain extends React.Component{
     }
 
     render(){
+       
         const {notes = []} = this.context
         const {noteId} = this.props.match.params
         const note = findNote(notes, noteId) || {content: ""}
@@ -29,12 +32,12 @@ export default class NotePageMain extends React.Component{
             <section className ='NotePageMain'>
                 <Note
                     id = {note.id}
-                    name = {note.name}
-                    modified = {note.modified}
+                    name = {note.title}
+                    contents = {note.contents}
                     onDeleteNote = {this.handleDeleteNote}
                 />
                 <div className = 'NotePageMain__content'>
-                    {note.content.split(/\n \r|\n/).map((para, i) =>
+                    {note.contents.split(/\n \r|\n/).map((para, i) =>
                         <p key={i}>{para}</p>
                     )}
                 </div>

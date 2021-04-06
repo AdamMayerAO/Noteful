@@ -22,7 +22,7 @@ class App extends Component {
           fetch(`${config.API_ENDPOINT}/notes`),
           fetch(`${config.API_ENDPOINT}/folders`)
       ])
-          .then(([notesRes, foldersRes]) => {
+        .then(([notesRes, foldersRes]) => {
               if (!notesRes.ok)
                   return notesRes.json().then(e => Promise.reject(e));
               if (!foldersRes.ok)
@@ -36,17 +36,18 @@ class App extends Component {
           .catch(error => {
               console.error({error});
           });
-  }
+  };
 
   handleDeleteNote = (noteId) => {
       this.setState({
-          notes: this.state.notes.filter(note => note.id !== noteId)
+          notes: this.state.notes.filter(note => note.id != noteId)
       });
   };
 
   handleDeleteFolder = (folderId) =>{
+     
       this.setState({
-          folders: this.state.folders.filter(folder => folder.id !==folderId)
+          folders: this.state.folders.filter(folder => folder.id !=folderId)
       });
   }
 
@@ -65,7 +66,7 @@ class App extends Component {
   renderNavRoutes() {
       return (
           <>
-              {['/', '/folder/:folderId'].map(path => (
+              {['/', '/folders/:folderId'].map(path => (
                   <Route
                       exact
                       key={path}
@@ -73,7 +74,7 @@ class App extends Component {
                       component={NoteListNav}
                   />
               ))}
-              <Route path="/note/:noteId" component={NotePageNav}/>
+              <Route path="/notes/:noteId" component={NotePageNav}/>
               <Route path="/add-folder" component={NotePageNav} />
               <Route path="/add-note" component={NotePageNav} />
           </>
@@ -83,7 +84,7 @@ class App extends Component {
   renderMainRoutes() {
       return (
           <>
-              {['/', '/folder/:folderId'].map(path => (
+              {['/', '/folders/:folderId'].map(path => (
                   <Route
                       exact
                       key={path}
@@ -91,7 +92,7 @@ class App extends Component {
                       component={NoteListMain}
                   />
               ))}
-              <Route path="/note/:noteId" component={NotePageMain} />
+              <Route path="/notes/:noteId" component={NotePageMain} />
               <Route path="/add-folder" component={AddFolder} />
               <Route path="/add-note" component={AddNote} />
           </>
